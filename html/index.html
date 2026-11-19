@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Araçları</title>
+<meta name="description" content="PDF birleştir, böl, dönüştür, imzala ve sesli dinle. Dosyalar cihazdan çıkmaz.">
+<meta name="theme-color" content="#d6453d">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PDF Araçları">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{
+  --bg:#f5f5f2;--panel:#fff;--ink:#1d1f23;--muted:#6a6f78;--line:#e3e1da;--soft:#efeee9;
+  --accent:#d6453d;--accent-ink:#fff;--ok:#2f7d5b;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#15171a;--panel:#1e2125;--ink:#e9e7e2;--muted:#9a9fa7;--line:#30343a;--soft:#262a2f;--accent:#ef6a5f;--accent-ink:#1a0d0c;--ok:#5fbf92}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:18px 14px 60px}
+header.top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:13px}
+h1{font-size:21px;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:2px 0 18px;font-size:14px}
+.group-t{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:20px 2px 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;text-align:left;color:inherit;font:inherit;display:flex;gap:12px;align-items:flex-start;transition:transform .12s,border-color .12s}
+.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.ic{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:18px}
+.card b{display:block;font-size:15px;margin-bottom:2px}
+.card span{font-size:13px;color:var(--muted)}
+@media (max-width:480px){.grid{grid-template-columns:1fr 1fr}.card{flex-direction:column;gap:8px;padding:12px}.card span{font-size:12px}}
+.back{border:0;background:none;color:var(--muted);font:500 14px Inter,sans-serif;cursor:pointer;padding:4px 0;margin-bottom:8px}
+.tool-h{display:flex;gap:12px;align-items:center;margin-bottom:4px}
+.tool-h h2{margin:0;font-size:20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:26px 14px;text-align:center;cursor:pointer;background:var(--soft)}
+.drop.over{border-color:var(--accent)}
+.drop b{display:block;font-size:16px}
+.drop span{font-size:13px;color:var(--muted)}
+.files{list-style:none;margin:12px 0 0;padding:0}
+.files li{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--panel)}
+.files li .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.files li .sz{font-size:12px;color:var(--muted)}
+.mini{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:13px;padding:0}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.opts label{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:4px}
+.opts .full{grid-column:1/-1}
+input[type=text],input[type=number],input[type=password],select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}
+input[type=range]{width:100%}
+input[type=color]{width:100%;height:38px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+.chk{display:flex!important;gap:8px;align-items:center;font-size:14px!important;color:var(--ink)!important}
+.btn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:10px 16px;font:600 15px Inter,sans-serif;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.run{width:100%;margin-top:14px;padding:14px;font-size:16px}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+.warn{font-size:13px;background:color-mix(in srgb,#e0a030 15%,var(--panel));border:1px solid color-mix(in srgb,#e0a030 45%,var(--line));border-radius:10px;padding:9px 11px;margin-top:10px}
+.status{margin-top:12px;font-size:14px;color:var(--muted);min-height:20px}
+.prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:6px}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.result{margin-top:14px;border:1px solid color-mix(in srgb,var(--ok) 40%,var(--line));background:color-mix(in srgb,var(--ok) 8%,var(--panel));border-radius:12px;padding:14px}
+.result h3{margin:0 0 8px;font-size:15px;color:var(--ok)}
+.dl{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.dl:first-of-type{border-top:0}
+.dl .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl .sz{font-size:12px;color:var(--muted)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:12px}
+.th{border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--soft);text-align:center;position:relative}
+.th.del{opacity:.35}
+.th .cv{height:140px;display:grid;place-items:center;overflow:hidden}
+.th canvas{max-width:100%;max-height:140px;box-shadow:0 1px 4px rgba(0,0,0,.18);background:#fff;transition:transform .2s}
+.th .pn{font-size:12px;color:var(--muted);margin:6px 0}
+.th .acts{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.sigtabs{display:flex;gap:6px;margin-bottom:8px}
+.sigtabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#sigPad{width:100%;height:160px;border:1px solid var(--line);border-radius:10px;background:#fff;touch-action:none;display:block}
+.place{position:relative;display:inline-block;max-width:100%;margin-top:10px;border:1px solid var(--line);cursor:crosshair;touch-action:manipulation}
+.place canvas{display:block;max-width:100%;height:auto}
+.place img{position:absolute;pointer-events:none;outline:1.5px dashed var(--accent)}
+.card.wide{grid-column:1/-1;flex-direction:row;align-items:center;padding:16px;border-color:color-mix(in srgb,#2f5d50 35%,var(--line))}
+.card.wide .ic{width:46px;height:46px;font-size:22px}
+.rs{cursor:pointer;border-radius:4px}
+.rs:hover{background:color-mix(in srgb,#ffd860 35%,transparent)}
+.rs.read{color:var(--muted)}
+.rs.cur{background:#ffe9a8;color:#1d1f23}
+.rbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--panel);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.08)}
+.rbar-in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.rb{width:44px;height:44px;border-radius:50%;padding:0;font-size:16px;flex:none}
+#hdrRight{margin-left:auto;display:flex;gap:8px;align-items:center}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.lang button{border:0;background:var(--panel);color:var(--muted);font:600 12px Inter,sans-serif;padding:6px 9px;cursor:pointer}
+.lang button.on{background:var(--ink);color:var(--bg)}
+.foot{margin-top:28px;font-size:12px;color:var(--muted);text-align:center}
+.hidden{display:none!important}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="home">
+    <header class="top"><div class="logo">PDF</div><h1 data-i18n>PDF Araçları</h1><span id="hdrRight"><button id="installBtn" class="btn hidden" style="padding:6px 10px;font-size:12px" data-i18n>⬇ Uygulamayı yükle</button><span class="lang" id="langSw" role="group" aria-label="Dil / Language"><button data-l="tr">TR</button><button data-l="en">EN</button></span></span></header>
+    <div id="iosHint" class="warn hidden" style="margin:0 0 14px;display:flex;gap:8px;align-items:flex-start"><span style="flex:1" data-i18n-html>iPhone/iPad'e kurmak için: Safari'de <b>Paylaş</b> düğmesine, ardından <b>Ana Ekrana Ekle</b>'ye dokun.</span><button class="mini" onclick="this.parentNode.remove();try{localStorage.setItem('iosHintSeen',1)}catch(e){}">✕</button></div>
+    <div id="offlineNote" class="hint hidden" style="margin:-8px 0 12px" data-i18n>📴 Çevrimdışısın — daha önce açılmış araçlar çalışmaya devam eder.</div>
+    <p class="sub" data-i18n>Birleştir, böl, dönüştür, imzala. Dosyaların hiçbir sunucuya yüklenmez; tüm işlemler kendi cihazında yapılır.</p>
+    <div id="groups"></div>
+  </section>
+
+  <section id="tool" class="hidden">
+    <button class="back" id="back" data-i18n>← Tüm araçlar</button>
+    <div class="tool-h"><div class="ic" id="tIc"></div><div><h2 id="tTitle"></h2><div class="sub" style="margin:0" id="tDesc"></div></div></div>
+
+    <div class="panel">
+      <div class="drop" id="drop" tabindex="0">
+        <b id="dropT" data-i18n>Dosya seç</b><span id="dropS" data-i18n>veya buraya sürükle</span>
+        <input type="file" id="fileIn" hidden>
+      </div>
+      <ul class="files" id="fileList"></ul>
+      <div id="custom"></div>
+    </div>
+
+    <div class="panel" id="optPanel"><div class="opts" id="opts"></div><div id="note"></div></div>
+
+    <button class="btn primary run" id="run" disabled data-i18n>İşle</button>
+    <div class="status" id="status"></div>
+    <div class="prog hidden" id="prog"><i id="progI"></i></div>
+    <div id="result"></div>
+  </section>
+  <footer class="foot"><span data-i18n>Açık kaynak</span> · <a href="https://github.com/purkusur-pixel/pdf" target="_blank" rel="noopener"><span data-i18n>Kaynak kodu GitHub'da</span></a> · <span data-i18n>MIT lisanslı</span></footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+// ---------- Dil / Language ----------
+const LANGS = ['tr', 'en'];
+const LANG = (() => {
+  try { const s = localStorage.getItem('pdfaraclari.lang'); if (LANGS.includes(s)) return s; } catch(e){}
+  return /^tr/i.test(navigator.language || '') ? 'tr' : 'en';
+})();
+// İngilizce çeviriler (anahtar = Türkçe metin). Yeni metin eklerken buraya da ekle.
+const EN = {
+  "PDF Araçları": "PDF Tools",
+  "Birleştir, böl, dönüştür, imzala. Dosyaların hiçbir sunucuya yüklenmez; tüm işlemler kendi cihazında yapılır.": "Merge, split, convert, sign. Your files are never uploaded to any server; everything happens on your own device.",
+  "← Tüm araçlar": "← All tools",
+  "İşle": "Process",
+  "Kütüphane yüklenemedi (internet bağlantını kontrol et)": "Could not load a library (check your internet connection)",
+  "İndirildi ✓": "Downloaded ✓",
+  "Önceki indirme onayı açık; biraz bekleyip tekrar dene.": "A previous download prompt is still open; wait a moment and try again.",
+  "İndirme başarısız: ": "Download failed: ",
+  "Şifre yanlış.": "Wrong password.",
+  "Bu PDF şifreli. Önce \"Kilit Aç\" aracını kullan.": "This PDF is password-protected. Use the \"Unlock\" tool first.",
+  "PDF açılamadı: ": "Could not open PDF: ",
+  "PDF okunamadı: ": "Could not read PDF: ",
+  "Sayfa {0}/{1} işleniyor…": "Processing page {0}/{1}…",
+  "\"{0}\" anlaşılamadı. Örnek: 1-3, 5, 8-": "Could not understand \"{0}\". Example: 1-3, 5, 8-",
+  "\"{0}\" geçersiz (belgede {1} sayfa var).": "\"{0}\" is invalid (the document has {1} pages).",
+  "Sayfa aralığı gir.": "Enter a page range.",
+  "Metin çıkarılıyor {0}/{1}…": "Extracting text {0}/{1}…",
+  "Sesli Oku": "Read Aloud",
+  "PDF Sesli Oku": "Read PDF Aloud",
+  "PDF'deki yazıları sesli dinle, okunan cümle vurgulanır": "Listen to the text of a PDF; the sentence being read is highlighted",
+  "Düzenle": "Edit",
+  "PDF Birleştir": "Merge PDF",
+  "Birden çok PDF'i tek dosyada topla": "Combine several PDFs into one file",
+  "Sırayı oklarla değiştirebilirsin.": "Change the order with the arrows.",
+  "{0} ekleniyor…": "Adding {0}…",
+  "PDF Böl": "Split PDF",
+  "Sayfaları ayrı dosyalara ayır": "Separate pages into individual files",
+  "Bölme şekli": "Split mode",
+  "Her sayfa ayrı dosya": "Every page as a separate file",
+  "Belirttiğim aralıklar": "Ranges I specify",
+  "Her N sayfada bir": "Every N pages",
+  "Aralıklar (her biri ayrı dosya)": "Ranges (each becomes a file)",
+  "N (sayfa sayısı)": "N (number of pages)",
+  "Dosya {0}/{1}…": "File {0}/{1}…",
+  "_bolunmus.zip": "_split.zip",
+  "{0}_bolunmus.zip": "{0}_split.zip",
+  "Sayfa Çıkar": "Extract Pages",
+  "Seçtiğin sayfalarla yeni PDF oluştur": "Create a new PDF from selected pages",
+  "Alınacak sayfalar": "Pages to keep",
+  "Sayfa Sil": "Delete Pages",
+  "İstemediğin sayfaları kaldır": "Remove pages you don't need",
+  "Silinecek sayfalar": "Pages to delete",
+  "Tüm sayfalar silinemez.": "You can't delete every page.",
+  "Sayfaları Düzenle": "Organize Pages",
+  "Sırala, döndür, sil — önizlemeli": "Reorder, rotate, delete — with previews",
+  "Döndürmek, silmek veya taşımak için sayfa altındaki düğmeleri kullan.": "Use the buttons under each page to rotate, delete or move it.",
+  "Önizleme {0}/{1}…": "Preview {0}/{1}…",
+  "{0}. sıra · orijinal s.{1}": "#{0} · original p.{1}",
+  "Sola taşı": "Move left",
+  "Sola döndür": "Rotate left",
+  "Sağa döndür": "Rotate right",
+  "Sil": "Delete",
+  "Geri al": "Undo",
+  "Sağa taşı": "Move right",
+  "En az bir sayfa kalmalı.": "At least one page must remain.",
+  "PDF Döndür": "Rotate PDF",
+  "Sayfaları 90° / 180° çevir": "Turn pages 90° / 180°",
+  "Yön": "Orientation",
+  "Sağa 90°": "90° right",
+  "Sola 90°": "90° left",
+  "Sayfalar (boş = hepsi)": "Pages (empty = all)",
+  "PDF Sıkıştır": "Compress PDF",
+  "Dosya boyutunu küçült": "Reduce file size",
+  "Sıkıştırma": "Compression",
+  "Güçlü (en küçük dosya)": "Strong (smallest file)",
+  "Önerilen": "Recommended",
+  "Hafif (en iyi kalite)": "Light (best quality)",
+  "Sayfalar görüntüye dönüştürülerek sıkıştırılır; sonuçta metin seçilemez/aranamaz olur. Taranmış ve görsel ağırlıklı PDF'lerde en iyi sonucu verir.": "Pages are compressed by converting them to images, so text in the result can't be selected or searched. Works best on scanned and image-heavy PDFs.",
+  "Boyut: {0} → {1} (%{2} küçüldü)": "Size: {0} → {1} ({2}% smaller)",
+  "Bu dosya zaten iyi sıkıştırılmış; sonuç daha küçük olmadı ({0} → {1}).": "This file is already well compressed; the result is not smaller ({0} → {1}).",
+  "PDF Kırp": "Crop PDF",
+  "Sayfa kenarlarını kes": "Trim page margins",
+  "Üst (mm)": "Top (mm)",
+  "Alt (mm)": "Bottom (mm)",
+  "Sol (mm)": "Left (mm)",
+  "Sağ (mm)": "Right (mm)",
+  "Kenar boşlukları sayfadan büyük.": "The margins are larger than the page.",
+  "PDF'den dönüştür": "Convert from PDF",
+  "PDF → JPG / PNG": "PDF → JPG / PNG",
+  "Her sayfayı resme çevir": "Turn every page into an image",
+  "Biçim": "Format",
+  "Çözünürlük": "Resolution",
+  "Düşük (72 DPI)": "Low (72 DPI)",
+  "Normal (150 DPI)": "Normal (150 DPI)",
+  "Yüksek (300 DPI)": "High (300 DPI)",
+  "Sayfa {0} çevriliyor…": "Converting page {0}…",
+  "{0}_resimler.zip": "{0}_images.zip",
+  "PDF → Word": "PDF → Word",
+  "Düzenlenebilir .docx belge": "Editable .docx document",
+  "Metin ve paragraflar aktarılır; karmaşık sayfa düzeni, tablolar ve resimler korunmaz. Taranmış PDF'lerde metin olmadığı için sonuç boş olur.": "Text and paragraphs are transferred; complex layouts, tables and images are not kept. Scanned PDFs contain no text, so the result will be empty.",
+  "Uyarı: PDF'de seçilebilir metin bulunamadı (taranmış belge olabilir).": "Warning: no selectable text was found in the PDF (it may be a scanned document).",
+  "PDF → PowerPoint": "PDF → PowerPoint",
+  "Her sayfa bir slayt": "One slide per page",
+  "Her sayfa slayta resim olarak yerleştirilir (görünüm birebir korunur, metin düzenlenemez).": "Each page is placed on a slide as an image (looks identical, but the text isn't editable).",
+  "Slayt {0}/{1}…": "Slide {0}/{1}…",
+  "PDF → Metin": "PDF → Text",
+  "Düz metin (.txt) olarak al": "Get plain text (.txt)",
+  "--- Sayfa {0} ---\n\n": "--- Page {0} ---\n\n",
+  "PDF'ye dönüştür": "Convert to PDF",
+  "JPG / PNG → PDF": "JPG / PNG → PDF",
+  "Resimleri PDF yap": "Turn images into a PDF",
+  "Sayfa boyutu": "Page size",
+  "Resim boyutunda": "Same as image",
+  "Otomatik": "Automatic",
+  "Dikey": "Portrait",
+  "Yatay": "Landscape",
+  "Kenar boşluğu": "Margin",
+  "Yok": "None",
+  "Küçük": "Small",
+  "Büyük": "Large",
+  "resimler": "images",
+  "Word → PDF": "Word → PDF",
+  ".docx belgesini PDF yap": "Turn a .docx document into PDF",
+  "Metin, başlıklar, listeler, tablolar ve resimler aktarılır; yazı tipleri ve sayfa düzeni Word'deki ile birebir aynı olmayabilir. Eski .doc biçimi desteklenmez.": "Text, headings, lists, tables and images are transferred; fonts and layout may not match Word exactly. The old .doc format is not supported.",
+  "Belge okunuyor…": "Reading document…",
+  "Excel → PDF": "Excel → PDF",
+  ".xlsx tablolarını PDF yap": "Turn .xlsx spreadsheets into PDF",
+  "Hücre değerleri tablo olarak aktarılır; renkler, grafikler ve özel biçimlendirme aktarılmaz.": "Cell values are transferred as tables; colors, charts and custom formatting are not.",
+  "Tablo okunuyor…": "Reading spreadsheet…",
+  "<p>(boş)</p>": "<p>(empty)</p>",
+  "İmza & işaret": "Sign & stamp",
+  "PDF İmzala": "Sign PDF",
+  "İmzanı çiz veya yaz, sayfaya yerleştir": "Draw or type your signature and place it",
+  "Önce imzanı oluştur ve sayfada yerine dokun.": "Create your signature first, then tap where it should go.",
+  "İmzanın konacağı yere önizlemede dokun.": "Tap the preview where the signature should go.",
+  "_imzali.pdf": "_signed.pdf",
+  "Filigran Ekle": "Add Watermark",
+  "Sayfalara yazı damgası bas": "Stamp text on every page",
+  "Filigran yazısı": "Watermark text",
+  "GİZLİDİR": "CONFIDENTIAL",
+  "Renk": "Color",
+  "Saydamlık": "Opacity",
+  "Büyüklük": "Size",
+  "Açı": "Angle",
+  "Çapraz": "Diagonal",
+  "Sayfayı döşe (tekrarla)": "Tile across the page (repeat)",
+  "Filigran yazısı gir.": "Enter watermark text.",
+  "_filigranli.pdf": "_watermarked.pdf",
+  "Sayfa Numarası": "Page Numbers",
+  "Sayfalara numara ekle": "Add numbers to pages",
+  "Konum": "Position",
+  "Alt orta": "Bottom center",
+  "Alt sağ": "Bottom right",
+  "Alt sol": "Bottom left",
+  "Üst orta": "Top center",
+  "Üst sağ": "Top right",
+  "Üst sol": "Top left",
+  "Sayfa 1": "Page 1",
+  "Sayfa 1 / 10": "Page 1 / 10",
+  "İlk numara": "First number",
+  "Numaralamaya başlanacak sayfa": "Start numbering on page",
+  "Yazı boyutu": "Font size",
+  "Sayfa {0}": "Page {0}",
+  "Sayfa {0} / {1}": "Page {0} / {1}",
+  "_numarali.pdf": "_numbered.pdf",
+  "Güvenlik": "Security",
+  "PDF Şifrele": "Protect PDF",
+  "Açılış şifresi koy": "Add an opening password",
+  "Şifre": "Password",
+  "Şifre (tekrar)": "Password (again)",
+  "Şifreleme sırasında sayfalar yüksek çözünürlüklü görüntüye dönüştürülür; metin seçilemez olur.": "While encrypting, pages are converted to high-resolution images; text can no longer be selected.",
+  "Şifre gir.": "Enter a password.",
+  "Şifreler eşleşmiyor.": "Passwords don't match.",
+  "Sayfa {0}/{1}…": "Page {0}/{1}…",
+  "_sifreli.pdf": "_protected.pdf",
+  "Kilit Aç": "Unlock",
+  "Şifreli PDF'in şifresini kaldır": "Remove the password from a PDF",
+  "PDF'in şifresi (biliyorsan)": "The PDF's password (if you know it)",
+  "Şifreyi bilmen gerekir. Sonuç dosyada sayfalar görüntüye dönüştürülür.": "You need to know the password. Pages are converted to images in the result.",
+  "_kilitsiz.pdf": "_unlocked.pdf",
+  "PDF Onar": "Repair PDF",
+  "Bozuk PDF'i kurtarmayı dene": "Try to recover a damaged PDF",
+  "Yapı onarılamadı, sayfalar yeniden çiziliyor…": "Couldn't repair the structure; redrawing pages…",
+  "_onarilmis.pdf": "_repaired.pdf",
+  "PDF oluşturuluyor…": "Creating PDF…",
+  "birlestirilmis.pdf": "merged.pdf",
+  "_secilen.pdf": "_selected.pdf",
+  "_duzenlenmis.pdf": "_edited.pdf",
+  "_dondurulmus.pdf": "_rotated.pdf",
+  "_sikistirilmis.pdf": "_compressed.pdf",
+  "_kirpilmis.pdf": "_cropped.pdf",
+  "Bu tarayıcı sesli okumayı desteklemiyor. Chrome, Edge veya Safari'nin güncel sürümünü dene.": "This browser doesn't support read-aloud. Try an up-to-date Chrome, Edge or Safari.",
+  "Ses": "Voice",
+  "⭐ = daha doğal ses. En doğal Türkçe sesler: bilgisayarda Edge'de “Emel/Ahmet Online (Natural)”, iPhone'da indirilmiş “Geliştirilmiş” sesler.": "⭐ = more natural voice. The most natural voices: the “Online (Natural)” voices in Edge on a computer, and downloaded “Enhanced” voices on iPhone.",
+  "Hız": "Speed",
+  "Ton": "Pitch",
+  "Bu sayfada metin yok.": "No text on this page.",
+  "Buradan oku ▶": "Read from here ▶",
+  "Bu PDF'de okunabilir metin bulunamadı. Taranmış (resim) bir belge olabilir.": "No readable text was found in this PDF. It may be a scanned (image) document.",
+  "{0} sayfa · {1} kelime · ~{2} dk": "{0} pages · {1} words · ~{2} min",
+  "Önceki cümle": "Previous sentence",
+  "Oynat / Duraklat": "Play / Pause",
+  "Sonraki cümle": "Next sentence",
+  "Durdur": "Stop",
+  "Bitti ✓": "Finished ✓",
+  "Duraklatıldı": "Paused",
+  "Okunuyor": "Reading",
+  "Hazır": "Ready",
+  "{0} · Sayfa {1} · Cümle {2}/{3}": "{0} · Page {1} · Sentence {2}/{3}",
+  "Adını yaz": "Type your name",
+  "Çiz": "Draw",
+  "Yaz": "Type",
+  "Temizle": "Clear",
+  "Sayfa": "Page",
+  "İmza genişliği": "Signature width",
+  "Tüm sayfalara ekle": "Add to all pages",
+  "Aşağıdaki önizlemede imzanın gideceği yere dokun.": "Tap the preview below where the signature should go.",
+  "Dosyaları seç": "Choose files",
+  "Dosya seç": "Choose file",
+  "veya buraya sürükle": "or drag it here",
+  "Yukarı": "Up",
+  "Aşağı": "Down",
+  "Kaldır": "Remove",
+  "Hazırlanıyor…": "Preparing…",
+  "Hata: ": "Error: ",
+  "Kütüphaneler yükleniyor…": "Loading libraries…",
+  "Tamamlandı ({0} sn).": "Done ({0} s).",
+  "Dosyan hazır": "Your file is ready",
+  "İndir": "Download",
+  "İpucu: .zip dosyası tümünü tek seferde indirir.": "Tip: the .zip file downloads everything at once.",
+  "İndirme bu görünümde kullanılamıyorsa sayfayı claude.ai üzerinde aç.": "If downloading doesn't work in this view, open the page on claude.ai.",
+  "Açık kaynak": "Open source",
+  "Kaynak kodu GitHub'da": "Source code on GitHub",
+  "MIT lisanslı": "MIT licensed",
+  "Dil": "Language",
+  "Paylaş": "Share",
+  "Paylaş veya Dosyalar'a kaydet": "Share or save to Files",
+  "⬇ Uygulamayı yükle": "⬇ Install app",
+  "iPhone/iPad'e kurmak için: Safari'de <b>Paylaş</b> düğmesine, ardından <b>Ana Ekrana Ekle</b>'ye dokun.": "To install on iPhone/iPad: in Safari tap <b>Share</b>, then <b>Add to Home Screen</b>.",
+  "📴 Çevrimdışısın — daha önce açılmış araçlar çalışmaya devam eder.": "📴 You're offline — tools you've used before keep working."
+};
+const __ = s => (LANG === 'en' && EN[s] != null) ? EN[s] : s;
+const __t = (strs, ...vals) => __(strs.map((s, i) => s + (i < vals.length ? '{' + i + '}' : '')).join('')).replace(/\{(\d+)\}/g, (m, i) => vals[+i]);
+document.documentElement.lang = LANG;
+document.title = __('PDF Araçları');
+document.querySelectorAll('[data-i18n]').forEach(e => { e.textContent = __(e.textContent.trim()); });
+document.querySelectorAll('[data-i18n-html]').forEach(e => { e.innerHTML = __(e.innerHTML.trim()); });
+document.querySelectorAll('#langSw button').forEach(b => {
+  b.classList.toggle('on', b.dataset.l === LANG);
+  b.addEventListener('click', () => { if (b.dataset.l === LANG) return; try { localStorage.setItem('pdfaraclari.lang', b.dataset.l); } catch(e){} location.reload(); });
+});
+const $ = id => document.getElementById(id);
+const el = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (k === 'html') e.innerHTML = v;
+    else e.setAttribute(k, v);
+  }
+  kids.flat().forEach(k => k != null && e.append(k));
+  return e;
+};
+const fmtSize = b => b < 1024 ? b + ' B' : b < 1048576 ? (b/1024).toFixed(0) + ' KB' : (b/1048576).toFixed(1) + ' MB';
+const baseName = n => n.replace(/\.[^.]+$/, '');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// ---------- Kütüphaneler (gerektiğinde yüklenir) ----------
+const CDN = {
+  pdfjs: ['libs/pdf.min.js',
+          'libs/pdf.worker.min.js'],
+  pdflib: ['libs/pdf-lib.min.js'],
+  jszip: ['libs/jszip.min.js'],
+  docx: ['libs/docx.umd.js'],
+  mammoth: ['libs/mammoth.browser.min.js'],
+  html2pdf: ['libs/html2pdf.bundle.min.js'],
+  pptx: ['libs/pptxgen.bundle.js'],
+  xlsx: ['libs/xlsx.full.min.js'],
+  jspdf: ['libs/jspdf.umd.min.js'],
+};
+const scriptCache = {};
+function loadScript(url){
+  return scriptCache[url] ||= new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = url;
+    s.onload = res; s.onerror = () => { delete scriptCache[url]; rej(new Error(__('Kütüphane yüklenemedi (internet bağlantını kontrol et)'))); };
+    document.head.appendChild(s);
+  });
+}
+async function need(...names){ for (const n of names) for (const u of CDN[n]) await loadScript(u); }
+
+// ---------- İndirme ----------
+let downloadsApi; // undefined = henüz bilinmiyor
+async function getDownloads(){
+  if (downloadsApi !== undefined) return downloadsApi;
+  try { downloadsApi = (window.claude && claude.use) ? await claude.use('downloads') : null; } catch(e){ downloadsApi = null; }
+  return downloadsApi;
+}
+getDownloads();
+async function saveFile(out, btn){
+  const d = await getDownloads();
+  if (d){
+    try { await d.save({ filename: out.name, data: out.blob }); btn.textContent = __('İndirildi ✓'); }
+    catch(e){
+      const code = e && e.code;
+      if (code === 'declined') return;
+      if (code === 'rate_limited') { setStatus(__('Önceki indirme onayı açık; biraz bekleyip tekrar dene.')); return; }
+      setStatus(__('İndirme başarısız: ') + (e && e.message || code || e));
+    }
+    return;
+  }
+  // Paylaşılan sayfa dışında (ör. doğrudan tarayıcı) normal indirme
+  const a = el('a', { href: URL.createObjectURL(out.blob), download: out.name });
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// ---------- PDF yardımcıları ----------
+const readBuf = f => f.arrayBuffer();
+async function pdfjsDoc(buf, password){
+  await need('pdfjs');
+  try {
+    return await pdfjsLib.getDocument({ data: new Uint8Array(buf.slice(0)), password }).promise;
+  } catch(e){
+    if (e && e.name === 'PasswordException') throw new Error(password ? __('Şifre yanlış.') : __('Bu PDF şifreli. Önce "Kilit Aç" aracını kullan.'));
+    throw new Error(__('PDF açılamadı: ') + (e.message || e));
+  }
+}
+async function libDoc(buf){
+  await need('pdflib');
+  try { return await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true }); }
+  catch(e){ throw new Error(__('PDF okunamadı: ') + (e.message || e)); }
+}
+const pdfBlob = bytes => new Blob([bytes], { type: 'application/pdf' });
+function canvasBlob(c, type = 'image/jpeg', q = 0.85){ return new Promise(r => c.toBlob(r, type, q)); }
+async function renderPage(pdf, n, scale){
+  const page = await pdf.getPage(n);
+  const vp = page.getViewport({ scale });
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.floor(vp.width)); c.height = Math.max(1, Math.floor(vp.height));
+  const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+  await page.render({ canvasContext: ctx, viewport: vp }).promise;
+  const base = page.getViewport({ scale: 1 });
+  return { canvas: c, wPt: base.width, hPt: base.height, page, vp };
+}
+// Sayfaları görüntüye çevirip yeni PDF yap (sıkıştırma, kilit açma, onarma)
+async function rasterToPdf(pdf, scale, quality){
+  const out = await PDFLib.PDFDocument.create();
+  for (let i = 1; i <= pdf.numPages; i++){
+    progress(i - 1, pdf.numPages, __t`Sayfa ${i}/${pdf.numPages} işleniyor…`);
+    const r = await renderPage(pdf, i, scale);
+    const jpg = await (await canvasBlob(r.canvas, 'image/jpeg', quality)).arrayBuffer();
+    const img = await out.embedJpg(jpg);
+    const p = out.addPage([r.wPt, r.hPt]);
+    p.drawImage(img, { x: 0, y: 0, width: r.wPt, height: r.hPt });
+    r.canvas.width = r.canvas.height = 0;
+  }
+  return out.save();
+}
+function parseRanges(str, max){
+  const groups = [];
+  for (const part of String(str).split(/[,;]+/)){
+    const p = part.trim(); if (!p) continue;
+    const m = p.match(/^(\d*)\s*-\s*(\d*)$/);
+    let a, b;
+    if (m){ a = m[1] ? +m[1] : 1; b = m[2] ? +m[2] : max; }
+    else if (/^\d+$/.test(p)){ a = b = +p; }
+    else throw new Error(__t`"${p}" anlaşılamadı. Örnek: 1-3, 5, 8-`);
+    if (a < 1 || b > max || a > b) throw new Error(__t`"${p}" geçersiz (belgede ${max} sayfa var).`);
+    const g = []; for (let i = a; i <= b; i++) g.push(i); groups.push(g);
+  }
+  if (!groups.length) throw new Error(__('Sayfa aralığı gir.'));
+  return groups;
+}
+async function zipOutputs(outs, name){
+  await need('jszip');
+  const z = new JSZip(); outs.forEach(o => z.file(o.name, o.blob));
+  return { name, blob: await z.generateAsync({ type: 'blob' }) };
+}
+async function loadImage(file){
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image(); img.src = url; await img.decode(); return img;
+  } finally { setTimeout(() => URL.revokeObjectURL(url), 1000); }
+}
+function hexRgb(h){ const n = parseInt(h.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
+
+// Metin çıkarma: satır ve paragrafları koruyarak
+async function extractParagraphs(pdf){
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++){
+    progress(i - 1, pdf.numPages, __t`Metin çıkarılıyor ${i}/${pdf.numPages}…`);
+    const page = await pdf.getPage(i);
+    const tc = await page.getTextContent();
+    const lines = []; let cur = null;
+    for (const it of tc.items){
+      if (!('str' in it)) continue;
+      const x = it.transform[4], y = it.transform[5], h = Math.abs(it.transform[3]) || it.height || 10;
+      if (!cur || Math.abs(y - cur.y) > h * 0.5){ cur = { y, h, text: '', endX: null }; lines.push(cur); }
+      else if (cur.endX != null && x - cur.endX > h * 0.18 && !cur.text.endsWith(' ') && !it.str.startsWith(' ')) cur.text += ' ';
+      cur.text += it.str;
+      if (it.str) cur.endX = x + (it.width || 0);
+      if (it.hasEOL) cur = null;
+    }
+    const paras = []; let para = '', prev = null;
+    for (const ln of lines){
+      const t = ln.text.replace(/\s+/g, ' ').trim();
+      if (!t){ if (para) { paras.push(para); para = ''; } prev = ln; continue; }
+      const gap = prev ? prev.y - ln.y : 0;
+      if (para && (gap > ln.h * 1.8 || gap < 0)){ paras.push(para); para = ''; }
+      para = para ? (para.endsWith('-') ? para.slice(0, -1) + t : para + ' ' + t) : t;
+      prev = ln;
+    }
+    if (para) paras.push(para);
+    pages.push(paras);
+  }
+  return pages;
+}
+
+// ---------- Arayüz durumu ----------
+let current = null, files = [], custom = {};
+function setStatus(t){ $('status').textContent = t || ''; }
+function progress(i, n, t){
+  $('prog').classList.remove('hidden'); $('progI').style.width = (n ? i / n * 100 : 0) + '%';
+  if (t) setStatus(t);
+}
+
+// ---------- Araçlar ----------
+const PDF_ACCEPT = 'application/pdf,.pdf';
+const opt = {
+  text: (id, label, val = '', ph = '', full) => el('div', full ? { class: 'full' } : {}, el('label', { for: id }, label), el('input', { type: 'text', id, value: val, placeholder: ph })),
+  pass: (id, label) => el('div', {}, el('label', { for: id }, label), el('input', { type: 'password', id, autocomplete: 'new-password' })),
+  num: (id, label, val, min, max) => el('div', {}, el('label', { for: id }, label), el('input', { type: 'number', id, value: val, min, max })),
+  sel: (id, label, choices, val) => el('div', {}, el('label', { for: id }, label),
+        el('select', { id }, choices.map(([v, t]) => { const o = el('option', { value: v }, t); if (v === val) o.selected = true; return o; }))),
+  range: (id, label, val, min, max, step, unit = '') => {
+    const out = el('b', {}, val + unit);
+    const inp = el('input', { type: 'range', id, value: val, min, max, step });
+    inp.addEventListener('input', () => out.textContent = inp.value + unit);
+    return el('div', {}, el('label', { for: id }, label + ': ', out), inp);
+  },
+  color: (id, label, val) => el('div', {}, el('label', { for: id }, label), el('input', { type: 'color', id, value: val })),
+  check: (id, label, on) => { const c = el('input', { type: 'checkbox', id }); c.checked = !!on; return el('div', {}, el('label', { class: 'chk' }, c, label)); },
+};
+const v = id => $(id) && ($(id).type === 'checkbox' ? $(id).checked : $(id).value);
+
+const TOOLS = [
+  // ===== Sesli oku =====
+  { id: 'read', group: __('Sesli Oku'), icon: '🔊', color: '#2f5d50', title: __('PDF Sesli Oku'), desc: __('PDF\'deki yazıları sesli dinle, okunan cümle vurgulanır'),
+    accept: PDF_ACCEPT, libs: ['pdfjs'], noRun: true, wide: true,
+    async onFiles(box){ await setupReader(box); } },
+
+  // ===== Düzenle =====
+  { id: 'merge', group: __('Düzenle'), icon: '⧉', color: '#d6453d', title: __('PDF Birleştir'), desc: __('Birden çok PDF\'i tek dosyada topla'),
+    accept: PDF_ACCEPT, multiple: true, min: 2, sortable: true,
+    hint: __('Sırayı oklarla değiştirebilirsin.'),
+    async run(){
+      const out = await PDFLib.PDFDocument.create();
+      for (let i = 0; i < files.length; i++){
+        progress(i, files.length, __t`${files[i].name} ekleniyor…`);
+        const src = await libDoc(await readBuf(files[i]));
+        const pages = await out.copyPages(src, src.getPageIndices());
+        pages.forEach(p => out.addPage(p));
+      }
+      return [{ name: __('birlestirilmis.pdf'), blob: pdfBlob(await out.save()) }];
+    }, libs: ['pdflib'] },
+
+  { id: 'split', group: __('Düzenle'), icon: '✂', color: '#d6453d', title: __('PDF Böl'), desc: __('Sayfaları ayrı dosyalara ayır'),
+    accept: PDF_ACCEPT, libs: ['pdflib', 'jszip'],
+    options: () => [
+      opt.sel('sMode', __('Bölme şekli'), [['each', __('Her sayfa ayrı dosya')], ['ranges', __('Belirttiğim aralıklar')], ['every', __('Her N sayfada bir')]], 'ranges'),
+      opt.text('sRanges', __('Aralıklar (her biri ayrı dosya)'), '1-3, 4-', 'ör. 1-3, 4-6, 7-'),
+      opt.num('sEvery', __('N (sayfa sayısı)'), 2, 1, 9999) ],
+    async run(){
+      const src = await libDoc(await readBuf(files[0])); const N = src.getPageCount();
+      let groups; const mode = v('sMode');
+      if (mode === 'each') groups = Array.from({ length: N }, (_, i) => [i + 1]);
+      else if (mode === 'every'){ const k = Math.max(1, +v('sEvery') || 1); groups = []; for (let i = 1; i <= N; i += k){ const g = []; for (let j = i; j < i + k && j <= N; j++) g.push(j); groups.push(g); } }
+      else groups = parseRanges(v('sRanges'), N);
+      const b = baseName(files[0].name), outs = [];
+      for (let gi = 0; gi < groups.length; gi++){
+        progress(gi, groups.length, __t`Dosya ${gi + 1}/${groups.length}…`);
+        const g = groups[gi], d = await PDFLib.PDFDocument.create();
+        (await d.copyPages(src, g.map(x => x - 1))).forEach(p => d.addPage(p));
+        const label = g.length === 1 ? `s${g[0]}` : `s${g[0]}-${g[g.length - 1]}`;
+        outs.push({ name: `${b}_${label}.pdf`, blob: pdfBlob(await d.save()) });
+      }
+      return outs.length > 1 ? [await zipOutputs(outs, __t`${b}_bolunmus.zip`), ...outs] : outs;
+    } },
+
+  { id: 'extract', group: __('Düzenle'), icon: '⇱', color: '#d6453d', title: __('Sayfa Çıkar'), desc: __('Seçtiğin sayfalarla yeni PDF oluştur'),
+    accept: PDF_ACCEPT, libs: ['pdflib'],
+    options: () => [opt.text('eRanges', __('Alınacak sayfalar'), '1-2', 'ör. 1, 3-5, 9', true)],
+    async run(){
+      const src = await libDoc(await readBuf(files[0]));
+      const pages = parseRanges(v('eRanges'), src.getPageCount()).flat();
+      const d = await PDFLib.PDFDocument.create();
+      (await d.copyPages(src, pages.map(x => x - 1))).forEach(p => d.addPage(p));
+      return [{ name: baseName(files[0].name) + __('_secilen.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'remove', group: __('Düzenle'), icon: '🗑', color: '#d6453d', title: __('Sayfa Sil'), desc: __('İstemediğin sayfaları kaldır'),
+    accept: PDF_ACCEPT, libs: ['pdflib'],
+    options: () => [opt.text('rRanges', __('Silinecek sayfalar'), '', 'ör. 2, 5-7', true)],
+    async run(){
+      const d = await libDoc(await readBuf(files[0])); const N = d.getPageCount();
+      const del = [...new Set(parseRanges(v('rRanges'), N).flat())].sort((a, b) => b - a);
+      if (del.length >= N) throw new Error(__('Tüm sayfalar silinemez.'));
+      del.forEach(n => d.removePage(n - 1));
+      return [{ name: baseName(files[0].name) + __('_duzenlenmis.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'organize', group: __('Düzenle'), icon: '▦', color: '#d6453d', title: __('Sayfaları Düzenle'), desc: __('Sırala, döndür, sil — önizlemeli'),
+    accept: PDF_ACCEPT, libs: ['pdflib', 'pdfjs'],
+    async onFiles(box){
+      const buf = await readBuf(files[0]); const pdf = await pdfjsDoc(buf);
+      custom.order = Array.from({ length: pdf.numPages }, (_, i) => ({ src: i, rot: 0, del: false, canvas: null }));
+      const grid = el('div', { class: 'thumbs' }); box.append(el('p', { class: 'hint' }, __('Döndürmek, silmek veya taşımak için sayfa altındaki düğmeleri kullan.')), grid);
+      for (let i = 0; i < pdf.numPages; i++){
+        progress(i, pdf.numPages, __t`Önizleme ${i + 1}/${pdf.numPages}…`);
+        const first = await pdf.getPage(i + 1); const s = 160 / Math.max(first.getViewport({ scale: 1 }).width, first.getViewport({ scale: 1 }).height);
+        custom.order[i].canvas = (await renderPage(pdf, i + 1, s * 1.5)).canvas;
+      }
+      setStatus(''); $('prog').classList.add('hidden');
+      const draw = () => {
+        grid.innerHTML = '';
+        custom.order.forEach((o, idx) => {
+          o.canvas.style.transform = `rotate(${o.rot}deg) scale(${o.rot % 180 ? .75 : 1})`;
+          const mk = (t, title, fn) => el('button', { class: 'mini', title, onclick: () => { fn(); draw(); } }, t);
+          grid.append(el('div', { class: 'th' + (o.del ? ' del' : '') },
+            el('div', { class: 'cv' }, o.canvas),
+            el('div', { class: 'pn' }, __t`${idx + 1}. sıra · orijinal s.${o.src + 1}`),
+            el('div', { class: 'acts' },
+              mk('◀', __('Sola taşı'), () => { if (idx > 0) [custom.order[idx - 1], custom.order[idx]] = [custom.order[idx], custom.order[idx - 1]]; }),
+              mk('⟲', __('Sola döndür'), () => o.rot = (o.rot + 270) % 360),
+              mk('⟳', __('Sağa döndür'), () => o.rot = (o.rot + 90) % 360),
+              mk(o.del ? '↺' : '✕', o.del ? __('Geri al') : __('Sil'), () => o.del = !o.del),
+              mk('▶', __('Sağa taşı'), () => { if (idx < custom.order.length - 1) [custom.order[idx + 1], custom.order[idx]] = [custom.order[idx], custom.order[idx + 1]]; }))));
+        });
+      };
+      draw();
+    },
+    async run(){
+      const src = await libDoc(await readBuf(files[0]));
+      const keep = custom.order.filter(o => !o.del);
+      if (!keep.length) throw new Error(__('En az bir sayfa kalmalı.'));
+      const d = await PDFLib.PDFDocument.create();
+      const pages = await d.copyPages(src, keep.map(o => o.src));
+      pages.forEach((p, i) => { if (keep[i].rot) p.setRotation(PDFLib.degrees((p.getRotation().angle + keep[i].rot) % 360)); d.addPage(p); });
+      return [{ name: baseName(files[0].name) + __('_duzenlenmis.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'rotate', group: __('Düzenle'), icon: '⟳', color: '#d6453d', title: __('PDF Döndür'), desc: __('Sayfaları 90° / 180° çevir'),
+    accept: PDF_ACCEPT, libs: ['pdflib'],
+    options: () => [opt.sel('roDeg', __('Yön'), [['90', __('Sağa 90°')], ['270', __('Sola 90°')], ['180', '180°']], '90'),
+                    opt.text('roRanges', __('Sayfalar (boş = hepsi)'), '', 'ör. 1, 3-4')],
+    async run(){
+      const d = await libDoc(await readBuf(files[0])); const N = d.getPageCount();
+      const sel = v('roRanges').trim() ? new Set(parseRanges(v('roRanges'), N).flat()) : null;
+      d.getPages().forEach((p, i) => { if (!sel || sel.has(i + 1)) p.setRotation(PDFLib.degrees((p.getRotation().angle + +v('roDeg')) % 360)); });
+      return [{ name: baseName(files[0].name) + __('_dondurulmus.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'compress', group: __('Düzenle'), icon: '⇲', color: '#2f7d5b', title: __('PDF Sıkıştır'), desc: __('Dosya boyutunu küçült'),
+    accept: PDF_ACCEPT, libs: ['pdflib', 'pdfjs'],
+    options: () => [opt.sel('cLvl', __('Sıkıştırma'), [['high', __('Güçlü (en küçük dosya)')], ['mid', __('Önerilen')], ['low', __('Hafif (en iyi kalite)')]], 'mid')],
+    note: __('Sayfalar görüntüye dönüştürülerek sıkıştırılır; sonuçta metin seçilemez/aranamaz olur. Taranmış ve görsel ağırlıklı PDF\'lerde en iyi sonucu verir.'),
+    async run(){
+      const buf = await readBuf(files[0]); const pdf = await pdfjsDoc(buf);
+      const [scale, q] = { high: [1.0, 0.5], mid: [1.4, 0.65], low: [2.0, 0.8] }[v('cLvl')];
+      const blob = pdfBlob(await rasterToPdf(pdf, scale, q));
+      const before = files[0].size, after = blob.size;
+      custom.msg = after < before ? __t`Boyut: ${fmtSize(before)} → ${fmtSize(after)} (%${Math.round((1 - after / before) * 100)} küçüldü)`
+                                  : __t`Bu dosya zaten iyi sıkıştırılmış; sonuç daha küçük olmadı (${fmtSize(before)} → ${fmtSize(after)}).`;
+      return [{ name: baseName(files[0].name) + __('_sikistirilmis.pdf'), blob }];
+    } },
+
+  { id: 'crop', group: __('Düzenle'), icon: '⬚', color: '#2f7d5b', title: __('PDF Kırp'), desc: __('Sayfa kenarlarını kes'),
+    accept: PDF_ACCEPT, libs: ['pdflib'],
+    options: () => [opt.num('crT', __('Üst (mm)'), 10, 0, 500), opt.num('crB', __('Alt (mm)'), 10, 0, 500), opt.num('crL', __('Sol (mm)'), 10, 0, 500), opt.num('crR', __('Sağ (mm)'), 10, 0, 500)],
+    async run(){
+      const d = await libDoc(await readBuf(files[0])); const mm = x => (+x || 0) * 72 / 25.4;
+      const [t, b, l, r] = ['crT', 'crB', 'crL', 'crR'].map(id => mm(v(id)));
+      d.getPages().forEach(p => {
+        const m = p.getMediaBox(); const w = m.width - l - r, h = m.height - t - b;
+        if (w < 10 || h < 10) throw new Error(__('Kenar boşlukları sayfadan büyük.'));
+        p.setCropBox(m.x + l, m.y + b, w, h); p.setTrimBox(m.x + l, m.y + b, w, h);
+      });
+      return [{ name: baseName(files[0].name) + __('_kirpilmis.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  // ===== PDF'den dönüştür =====
+  { id: 'pdf2img', group: __('PDF\'den dönüştür'), icon: '🖼', color: '#c99a1a', title: __('PDF → JPG / PNG'), desc: __('Her sayfayı resme çevir'),
+    accept: PDF_ACCEPT, libs: ['pdfjs', 'jszip'],
+    options: () => [opt.sel('iFmt', __('Biçim'), [['jpg', 'JPG'], ['png', 'PNG']], 'jpg'),
+                    opt.sel('iDpi', __('Çözünürlük'), [['72', __('Düşük (72 DPI)')], ['150', __('Normal (150 DPI)')], ['300', __('Yüksek (300 DPI)')]], '150'),
+                    opt.text('iRanges', __('Sayfalar (boş = hepsi)'), '', 'ör. 1-3')],
+    async run(){
+      const pdf = await pdfjsDoc(await readBuf(files[0]));
+      const pages = v('iRanges').trim() ? parseRanges(v('iRanges'), pdf.numPages).flat() : Array.from({ length: pdf.numPages }, (_, i) => i + 1);
+      const fmt = v('iFmt'), scale = +v('iDpi') / 72, b = baseName(files[0].name), outs = [];
+      for (let k = 0; k < pages.length; k++){
+        progress(k, pages.length, __t`Sayfa ${pages[k]} çevriliyor…`);
+        const r = await renderPage(pdf, pages[k], scale);
+        outs.push({ name: `${b}_s${pages[k]}.${fmt}`, blob: await canvasBlob(r.canvas, fmt === 'png' ? 'image/png' : 'image/jpeg', 0.92) });
+        r.canvas.width = r.canvas.height = 0;
+      }
+      return outs.length > 1 ? [await zipOutputs(outs, __t`${b}_resimler.zip`), ...outs] : outs;
+    } },
+
+  { id: 'pdf2word', group: __('PDF\'den dönüştür'), icon: 'W', color: '#2b5797', title: __('PDF → Word'), desc: __('Düzenlenebilir .docx belge'),
+    accept: PDF_ACCEPT, libs: ['pdfjs', 'docx'],
+    note: __('Metin ve paragraflar aktarılır; karmaşık sayfa düzeni, tablolar ve resimler korunmaz. Taranmış PDF\'lerde metin olmadığı için sonuç boş olur.'),
+    async run(){
+      const pages = await extractParagraphs(await pdfjsDoc(await readBuf(files[0])));
+      const { Document, Packer, Paragraph, TextRun } = window.docx;
+      const children = [];
+      pages.forEach((paras, pi) => {
+        (paras.length ? paras : ['']).forEach((t, k) => children.push(new Paragraph({
+          pageBreakBefore: pi > 0 && k === 0, spacing: { after: 160 },
+          children: [new TextRun({ text: t, font: 'Calibri', size: 22 })] })));
+      });
+      if (!pages.some(p => p.length)) custom.msg = __('Uyarı: PDF\'de seçilebilir metin bulunamadı (taranmış belge olabilir).');
+      const doc = new Document({ sections: [{ children }] });
+      return [{ name: baseName(files[0].name) + '.docx', blob: await Packer.toBlob(doc) }];
+    } },
+
+  { id: 'pdf2ppt', group: __('PDF\'den dönüştür'), icon: 'P', color: '#c4502c', title: __('PDF → PowerPoint'), desc: __('Her sayfa bir slayt'),
+    accept: PDF_ACCEPT, libs: ['pdfjs', 'pptx'],
+    note: __('Her sayfa slayta resim olarak yerleştirilir (görünüm birebir korunur, metin düzenlenemez).'),
+    async run(){
+      const pdf = await pdfjsDoc(await readBuf(files[0]));
+      const pptx = new PptxGenJS();
+      for (let i = 1; i <= pdf.numPages; i++){
+        progress(i - 1, pdf.numPages, __t`Slayt ${i}/${pdf.numPages}…`);
+        const r = await renderPage(pdf, i, 2);
+        if (i === 1){ pptx.defineLayout({ name: 'PDF', width: r.wPt / 72, height: r.hPt / 72 }); pptx.layout = 'PDF'; }
+        const s = pptx.addSlide();
+        const W = r.wPt / 72, H = r.hPt / 72, L = pptx.presLayout; // ilk sayfa boyutuna sığdır
+        const LW = L.width / 914400, LH = L.height / 914400, k = Math.min(LW / W, LH / H);
+        s.addImage({ data: r.canvas.toDataURL('image/jpeg', 0.88), x: (LW - W * k) / 2, y: (LH - H * k) / 2, w: W * k, h: H * k });
+        r.canvas.width = r.canvas.height = 0;
+      }
+      return [{ name: baseName(files[0].name) + '.pptx', blob: await pptx.write({ outputType: 'blob' }) }];
+    } },
+
+  { id: 'pdf2txt', group: __('PDF\'den dönüştür'), icon: 'T', color: '#596270', title: __('PDF → Metin'), desc: __('Düz metin (.txt) olarak al'),
+    accept: PDF_ACCEPT, libs: ['pdfjs'],
+    async run(){
+      const pages = await extractParagraphs(await pdfjsDoc(await readBuf(files[0])));
+      const txt = pages.map((p, i) => __t`--- Sayfa ${i + 1} ---\n\n` + p.join('\n\n')).join('\n\n');
+      return [{ name: baseName(files[0].name) + '.txt', blob: new Blob([txt], { type: 'text/plain' }) }];
+    } },
+
+  // ===== PDF'ye dönüştür =====
+  { id: 'img2pdf', group: __('PDF\'ye dönüştür'), icon: '🖼', color: '#c99a1a', title: __('JPG / PNG → PDF'), desc: __('Resimleri PDF yap'),
+    accept: 'image/*', multiple: true, sortable: true, libs: ['pdflib'],
+    options: () => [opt.sel('pSize', __('Sayfa boyutu'), [['a4', 'A4'], ['letter', 'Letter'], ['fit', __('Resim boyutunda')]], 'a4'),
+                    opt.sel('pOri', __('Yön'), [['auto', __('Otomatik')], ['p', __('Dikey')], ['l', __('Yatay')]], 'auto'),
+                    opt.sel('pMar', __('Kenar boşluğu'), [['0', __('Yok')], ['20', __('Küçük')], ['40', __('Büyük')]], '20')],
+    async run(){
+      const d = await PDFLib.PDFDocument.create();
+      for (let i = 0; i < files.length; i++){
+        progress(i, files.length, __t`${files[i].name} ekleniyor…`);
+        const f = files[i]; let img;
+        if (/jpe?g$/i.test(f.type)) img = await d.embedJpg(await readBuf(f));
+        else if (/png$/i.test(f.type)) img = await d.embedPng(await readBuf(f));
+        else { const im = await loadImage(f); const c = el('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
+               const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0);
+               img = await d.embedJpg(await (await canvasBlob(c, 'image/jpeg', 0.92)).arrayBuffer()); }
+        const m = +v('pMar'); let W, H;
+        if (v('pSize') === 'fit'){ W = img.width * 0.75 + 2 * m; H = img.height * 0.75 + 2 * m; }
+        else { [W, H] = v('pSize') === 'a4' ? [595.28, 841.89] : [612, 792];
+               const o = v('pOri'), land = o === 'l' || (o === 'auto' && img.width > img.height); if (land) [W, H] = [H, W]; }
+        const k = Math.min((W - 2 * m) / img.width, (H - 2 * m) / img.height);
+        const p = d.addPage([W, H]);
+        p.drawImage(img, { x: (W - img.width * k) / 2, y: (H - img.height * k) / 2, width: img.width * k, height: img.height * k });
+      }
+      return [{ name: (files.length === 1 ? baseName(files[0].name) : __('resimler')) + '.pdf', blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'word2pdf', group: __('PDF\'ye dönüştür'), icon: 'W', color: '#2b5797', title: __('Word → PDF'), desc: __('.docx belgesini PDF yap'),
+    accept: '.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document', libs: ['mammoth', 'html2pdf'],
+    note: __('Metin, başlıklar, listeler, tablolar ve resimler aktarılır; yazı tipleri ve sayfa düzeni Word\'deki ile birebir aynı olmayabilir. Eski .doc biçimi desteklenmez.'),
+    async run(){
+      setStatus(__('Belge okunuyor…'));
+      const r = await mammoth.convertToHtml({ arrayBuffer: await readBuf(files[0]) });
+      return [{ name: baseName(files[0].name) + '.pdf', blob: await htmlToPdf(r.value, 'p') }];
+    } },
+
+  { id: 'excel2pdf', group: __('PDF\'ye dönüştür'), icon: 'X', color: '#1e7145', title: __('Excel → PDF'), desc: __('.xlsx tablolarını PDF yap'),
+    accept: '.xlsx,.xls,.csv,.ods', libs: ['xlsx', 'html2pdf'],
+    options: () => [opt.sel('xOri', __('Yön'), [['l', __('Yatay')], ['p', __('Dikey')]], 'l')],
+    note: __('Hücre değerleri tablo olarak aktarılır; renkler, grafikler ve özel biçimlendirme aktarılmaz.'),
+    async run(){
+      setStatus(__('Tablo okunuyor…'));
+      const wb = XLSX.read(await readBuf(files[0]));
+      let html = '';
+      wb.SheetNames.forEach((n, i) => {
+        const t = new DOMParser().parseFromString(XLSX.utils.sheet_to_html(wb.Sheets[n]), 'text/html').querySelector('table');
+        html += `<h2 style="${i ? 'page-break-before:always;' : ''}">${n.replace(/</g, '&lt;')}</h2>` + (t ? t.outerHTML : __('<p>(boş)</p>'));
+      });
+      return [{ name: baseName(files[0].name) + '.pdf', blob: await htmlToPdf(html, v('xOri')) }];
+    } },
+
+  // ===== Güvenlik & imza =====
+  { id: 'sign', group: __('İmza & işaret'), icon: '✍', color: '#7b4bb7', title: __('PDF İmzala'), desc: __('İmzanı çiz veya yaz, sayfaya yerleştir'),
+    accept: PDF_ACCEPT, libs: ['pdflib', 'pdfjs'],
+    async onFiles(box){ await setupSign(box); },
+    async run(){
+      if (!custom.sigPng) throw new Error(__('Önce imzanı oluştur ve sayfada yerine dokun.'));
+      if (!custom.place) throw new Error(__('İmzanın konacağı yere önizlemede dokun.'));
+      const d = await libDoc(await readBuf(files[0]));
+      const img = await d.embedPng(custom.sigPng);
+      const pages = d.getPages();
+      const targets = v('sgAll') ? pages.map((_, i) => i) : [custom.pageNo - 1];
+      targets.forEach(i => {
+        const p = pages[i]; const pl = custom.place;
+        p.drawImage(img, { x: pl.x - pl.w / 2, y: pl.y - pl.h / 2, width: pl.w, height: pl.h });
+      });
+      return [{ name: baseName(files[0].name) + __('_imzali.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'watermark', group: __('İmza & işaret'), icon: '◈', color: '#7b4bb7', title: __('Filigran Ekle'), desc: __('Sayfalara yazı damgası bas'),
+    accept: PDF_ACCEPT, libs: ['pdflib'],
+    options: () => [opt.text('wText', __('Filigran yazısı'), __('GİZLİDİR'), '', true), opt.color('wCol', __('Renk'), '#d6453d'),
+                    opt.range('wOp', __('Saydamlık'), 25, 5, 100, 5, '%'), opt.range('wSize', __('Büyüklük'), 70, 20, 100, 5, '%'),
+                    opt.sel('wRot', __('Açı'), [['45', __('Çapraz')], ['0', __('Yatay')]], '45'), opt.check('wTile', __('Sayfayı döşe (tekrarla)'), false)],
+    async run(){
+      const d = await libDoc(await readBuf(files[0]));
+      const text = v('wText').trim(); if (!text) throw new Error(__('Filigran yazısı gir.'));
+      // Türkçe karakterler için yazıyı görüntü olarak çiz
+      const fs = 160, c = el('canvas'), x = c.getContext('2d');
+      x.font = `700 ${fs}px Inter, Arial, sans-serif`; const tw = x.measureText(text).width;
+      c.width = Math.ceil(tw + fs * 0.4); c.height = Math.ceil(fs * 1.35);
+      x.font = `700 ${fs}px Inter, Arial, sans-serif`; x.fillStyle = v('wCol'); x.textBaseline = 'middle'; x.textAlign = 'center';
+      x.fillText(text, c.width / 2, c.height / 2);
+      const img = await d.embedPng(await (await canvasBlob(c, 'image/png')).arrayBuffer());
+      const ang = +v('wRot'), op = +v('wOp') / 100, sz = +v('wSize') / 100, tile = v('wTile');
+      d.getPages().forEach(p => {
+        const { width: W, height: H } = p.getSize();
+        const w = (tile ? 0.35 : sz) * Math.min(W, H) * (ang ? 1.25 : 1), h = w * c.height / c.width;
+        const rad = ang * Math.PI / 180;
+        const put = (cx, cy) => p.drawImage(img, { x: cx - (w / 2) * Math.cos(rad) + (h / 2) * Math.sin(rad), y: cy - (w / 2) * Math.sin(rad) - (h / 2) * Math.cos(rad), width: w, height: h, rotate: PDFLib.degrees(ang), opacity: op });
+        if (tile){ for (let yy = H * 0.15; yy < H; yy += H / 3.5) for (let xx = W * 0.25; xx < W; xx += W / 2) put(xx, yy); }
+        else put(W / 2, H / 2);
+      });
+      return [{ name: baseName(files[0].name) + __('_filigranli.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'numbers', group: __('İmza & işaret'), icon: '#', color: '#7b4bb7', title: __('Sayfa Numarası'), desc: __('Sayfalara numara ekle'),
+    accept: PDF_ACCEPT, libs: ['pdflib'],
+    options: () => [opt.sel('nPos', __('Konum'), [['bc', __('Alt orta')], ['br', __('Alt sağ')], ['bl', __('Alt sol')], ['tc', __('Üst orta')], ['tr', __('Üst sağ')], ['tl', __('Üst sol')]], 'bc'),
+                    opt.sel('nFmt', __('Biçim'), [['n', '1'], ['nN', '1 / 10'], ['pn', __('Sayfa 1')], ['pnN', __('Sayfa 1 / 10')]], 'n'),
+                    opt.num('nStart', __('İlk numara'), 1, 0, 99999), opt.num('nFrom', __('Numaralamaya başlanacak sayfa'), 1, 1, 99999),
+                    opt.num('nSize', __('Yazı boyutu'), 11, 6, 40), opt.color('nCol', __('Renk'), '#333333')],
+    async run(){
+      const d = await libDoc(await readBuf(files[0]));
+      const font = await d.embedFont(PDFLib.StandardFonts.Helvetica);
+      const pages = d.getPages(), from = Math.max(1, +v('nFrom') || 1), start = +v('nStart') || 1;
+      const total = pages.length - from + start; const size = +v('nSize') || 11, pos = v('nPos'), fmt = v('nFmt');
+      const [r, g, b] = hexRgb(v('nCol'));
+      pages.forEach((p, i) => {
+        if (i + 1 < from) return;
+        const n = i + 1 - from + start;
+        const t = { n: `${n}`, nN: `${n} / ${total}`, pn: __t`Sayfa ${n}`, pnN: __t`Sayfa ${n} / ${total}` }[fmt];
+        const { width: W, height: H } = p.getSize(); const tw = font.widthOfTextAtSize(t, size), m = 28;
+        const x = pos[1] === 'c' ? (W - tw) / 2 : pos[1] === 'r' ? W - m - tw : m;
+        const y = pos[0] === 'b' ? m - size / 3 : H - m - size * 0.7;
+        p.drawText(t, { x, y, size, font, color: PDFLib.rgb(r, g, b) });
+      });
+      return [{ name: baseName(files[0].name) + __('_numarali.pdf'), blob: pdfBlob(await d.save()) }];
+    } },
+
+  { id: 'protect', group: __('Güvenlik'), icon: '🔒', color: '#334155', title: __('PDF Şifrele'), desc: __('Açılış şifresi koy'),
+    accept: PDF_ACCEPT, libs: ['pdfjs', 'jspdf'],
+    options: () => [opt.pass('prPw', __('Şifre')), opt.pass('prPw2', __('Şifre (tekrar)'))],
+    note: __('Şifreleme sırasında sayfalar yüksek çözünürlüklü görüntüye dönüştürülür; metin seçilemez olur.'),
+    async run(){
+      const pw = v('prPw'); if (!pw) throw new Error(__('Şifre gir.')); if (pw !== v('prPw2')) throw new Error(__('Şifreler eşleşmiyor.'));
+      const pdf = await pdfjsDoc(await readBuf(files[0]));
+      const { jsPDF } = window.jspdf; let doc;
+      for (let i = 1; i <= pdf.numPages; i++){
+        progress(i - 1, pdf.numPages, __t`Sayfa ${i}/${pdf.numPages}…`);
+        const r = await renderPage(pdf, i, 2); const o = r.wPt > r.hPt ? 'l' : 'p';
+        if (i === 1) doc = new jsPDF({ orientation: o, unit: 'pt', format: [r.wPt, r.hPt], encryption: { userPassword: pw, ownerPassword: pw, userPermissions: ['print', 'copy'] } });
+        else doc.addPage([r.wPt, r.hPt], o);
+        doc.addImage(new Uint8Array(await (await canvasBlob(r.canvas, 'image/jpeg', 0.85)).arrayBuffer()), 'JPEG', 0, 0, r.wPt, r.hPt);
+        r.canvas.width = r.canvas.height = 0;
+      }
+      return [{ name: baseName(files[0].name) + __('_sifreli.pdf'), blob: doc.output('blob') }];
+    } },
+
+  { id: 'unlock', group: __('Güvenlik'), icon: '🔓', color: '#334155', title: __('Kilit Aç'), desc: __('Şifreli PDF\'in şifresini kaldır'),
+    accept: PDF_ACCEPT, libs: ['pdfjs', 'pdflib'],
+    options: () => [opt.pass('ulPw', __('PDF\'in şifresi (biliyorsan)'))],
+    note: __('Şifreyi bilmen gerekir. Sonuç dosyada sayfalar görüntüye dönüştürülür.'),
+    async run(){
+      const pdf = await pdfjsDoc(await readBuf(files[0]), v('ulPw') || undefined);
+      return [{ name: baseName(files[0].name) + __('_kilitsiz.pdf'), blob: pdfBlob(await rasterToPdf(pdf, 2, 0.85)) }];
+    } },
+
+  { id: 'repair', group: __('Güvenlik'), icon: '🛠', color: '#334155', title: __('PDF Onar'), desc: __('Bozuk PDF\'i kurtarmayı dene'),
+    accept: PDF_ACCEPT, libs: ['pdflib', 'pdfjs'],
+    async run(){
+      const buf = await readBuf(files[0]);
+      try {
+        const d = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true, throwOnInvalidObject: false });
+        if (d.getPageCount() > 0) return [{ name: baseName(files[0].name) + __('_onarilmis.pdf'), blob: pdfBlob(await d.save()) }];
+      } catch(e){}
+      setStatus(__('Yapı onarılamadı, sayfalar yeniden çiziliyor…'));
+      const pdf = await pdfjsDoc(buf);
+      return [{ name: baseName(files[0].name) + __('_onarilmis.pdf'), blob: pdfBlob(await rasterToPdf(pdf, 2, 0.85)) }];
+    } },
+];
+
+// HTML → PDF (Word/Excel)
+async function htmlToPdf(html, orientation){
+  setStatus(__('PDF oluşturuluyor…'));
+  const holder = el('div', { style: 'position:fixed;left:-10000px;top:0' });
+  const box = el('div', { style: 'width:' + (orientation === 'l' ? '272mm' : '185mm') + ';background:#fff;color:#111;font:12pt/1.45 Calibri,Arial,sans-serif;padding:0' });
+  holder.appendChild(box);
+  box.innerHTML = `<style>
+    table{border-collapse:collapse;width:100%;font-size:10pt;margin:6px 0 14px}
+    td,th{border:1px solid #bbb;padding:4px 6px;vertical-align:top}
+    img{max-width:100%} h1,h2,h3{margin:14px 0 8px} p{margin:0 0 8px} tr{page-break-inside:avoid}
+  </style>` + html;
+  document.body.appendChild(holder);
+  try {
+    return await html2pdf().set({
+      margin: 12, image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: orientation === 'l' ? 'landscape' : 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] },
+    }).from(box).outputPdf('blob');
+  } finally { holder.remove(); }
+}
+
+// ---------- Sesli okuyucu ----------
+const synth = window.speechSynthesis;
+const R = { sentences: [], idx: 0, playing: false, paused: false, voices: [], token: 0, bar: null };
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, val){ try { localStorage.setItem(k, val); } catch(e){} } };
+function stopReader(){ R.token++; if (synth) synth.cancel(); R.playing = false; R.paused = false; if (R.bar){ R.bar.remove(); R.bar = null; } document.body.style.paddingBottom = ''; }
+async function setupReader(box){
+  stopReader();
+  if (!synth){ box.append(el('div', { class: 'warn' }, __('Bu tarayıcı sesli okumayı desteklemiyor. Chrome, Edge veya Safari\'nin güncel sürümünü dene.'))); return; }
+  const pdf = await pdfjsDoc(await readBuf(files[0]));
+  const pages = [];
+  for (let p = 1; p <= pdf.numPages; p++){
+    progress(p - 1, pdf.numPages, __t`Metin çıkarılıyor ${p}/${pdf.numPages}…`);
+    const page = await pdf.getPage(p); const tc = await page.getTextContent();
+    let t = '';
+    for (const it of tc.items){ if (!('str' in it)) continue; t += it.str; if (it.hasEOL) t += '\n'; else if (it.str && !it.str.endsWith(' ')) t += ' '; }
+    pages.push(t.replace(/(\p{L})-\n(\p{Ll})/gu, '$1$2').replace(/[ \t]+\n/g, '\n').replace(/\n{2,}/g, '¶').replace(/\n/g, ' ').replace(/¶/g, '\n\n').replace(/[ \t]{2,}/g, ' ').trim());
+  }
+  // Ayarlar
+  const voiceSel = el('select', { id: 'rdVoice' });
+  const mkRange = (id, label, min, max, def) => {
+    const saved = store.get('pdfreader.' + id.slice(2).toLowerCase()); const inp = el('input', { type: 'range', id, min, max, step: 0.1, value: saved || def });
+    const out = el('b', {}, Number(inp.value).toFixed(1));
+    inp.addEventListener('input', () => { out.textContent = Number(inp.value).toFixed(1); store.set('pdfreader.' + id.slice(2).toLowerCase(), inp.value); });
+    inp.addEventListener('change', () => { if (R.playing && !R.paused) speakFrom(R.idx); });
+    return el('div', {}, el('label', {}, label + ': ', out), inp);
+  };
+  const docBox = el('div', { style: 'font:17px/1.7 Georgia,serif;margin-top:14px' });
+  box.append(el('div', { class: 'opts', style: 'margin-top:14px' },
+    el('div', { class: 'full' }, el('label', {}, __('Ses')), voiceSel,
+      el('div', { class: 'hint', style: 'font-size:12px' }, __('⭐ = daha doğal ses. En doğal Türkçe sesler: bilgisayarda Edge\'de “Emel/Ahmet Online (Natural)”, iPhone\'da indirilmiş “Geliştirilmiş” sesler.'))),
+    mkRange('rdRate', __('Hız'), 0.5, 2, 1), mkRange('rdPitch', __('Ton'), 0.5, 1.5, 1)), docBox);
+
+  const isNatural = vo => /natural|online|neural|enhanced|premium|geliştirilmiş|wavenet/i.test(vo.name) || (/google/i.test(vo.name) && !vo.localService);
+  function loadVoices(){
+    const vs = synth.getVoices(); if (!vs.length) return;
+    const score = vo => (vo.lang.toLowerCase().startsWith(LANG) ? 0 : 2) + (isNatural(vo) ? 0 : 1);
+    R.voices = vs.slice().sort((a, b) => score(a) - score(b) || a.lang.localeCompare(b.lang) || a.name.localeCompare(b.name));
+    const saved = store.get('pdfreader.voice'); voiceSel.innerHTML = '';
+    R.voices.forEach((vo, i) => { const o = el('option', { value: i }, `${isNatural(vo) ? '⭐ ' : ''}${vo.name} (${vo.lang})`); if (saved ? vo.name === saved : i === 0) o.selected = true; voiceSel.append(o); });
+  }
+  loadVoices(); synth.onvoiceschanged = loadVoices;
+  voiceSel.onchange = () => { const vo = R.voices[voiceSel.value]; if (vo) store.set('pdfreader.voice', vo.name); if (R.playing && !R.paused) speakFrom(R.idx); };
+
+  // Metin
+  const split = text => {
+    const out = [];
+    text.split(/\n\n+/).forEach(par => (par.match(/[^.!?…]+(?:[.!?…]+["'”’)\]]*|$)\s*/g) || []).forEach(s => {
+      s = s.trim(); if (!s) return;
+      while (s.length > 220){ let c = s.lastIndexOf(', ', 220); if (c < 80) c = s.lastIndexOf(' ', 220); if (c < 40) c = 220; out.push(s.slice(0, c + 1).trim()); s = s.slice(c + 1).trim(); }
+      if (s) out.push(s);
+    }));
+    return out;
+  };
+  R.sentences = []; R.idx = 0;
+  pages.forEach((txt, pi) => {
+    const start = R.sentences.length;
+    const head = el('div', { style: 'font:600 12px Inter,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 6px;padding-top:10px;border-top:1px solid var(--line);display:flex;justify-content:space-between' }, __t`Sayfa ${pi + 1}`);
+    docBox.append(head);
+    if (!txt){ docBox.append(el('p', { class: 'hint' }, __('Bu sayfada metin yok.'))); return; }
+    head.append(el('button', { style: 'border:0;background:none;color:var(--accent);font:500 12px Inter,sans-serif;cursor:pointer', onclick: () => speakFrom(start) }, __('Buradan oku ▶')));
+    txt.split(/\n\n+/).forEach(par => {
+      const p = el('p', { style: 'margin:0 0 12px' });
+      split(par).forEach(s => { const i = R.sentences.length; const sp = el('span', { class: 'rs', onclick: () => speakFrom(i) }, s + ' '); p.append(sp); R.sentences.push({ text: s, el: sp, page: pi + 1 }); });
+      docBox.append(p);
+    });
+  });
+  if (!R.sentences.length){ box.append(el('div', { class: 'warn' }, __('Bu PDF\'de okunabilir metin bulunamadı. Taranmış (resim) bir belge olabilir.'))); return; }
+  const words = R.sentences.reduce((n, s) => n + s.text.split(/\s+/).length, 0);
+  docBox.prepend(el('div', { class: 'hint' }, __t`${pages.length} sayfa · ${words.toLocaleString(LANG === 'tr' ? 'tr-TR' : 'en-US')} kelime · ~${Math.max(1, Math.round(words / 150))} dk`));
+
+  // Oynatıcı çubuğu
+  const bPrev = el('button', { class: 'btn rb', title: __('Önceki cümle') }, '⏮'), bPlay = el('button', { class: 'btn primary rb', title: __('Oynat / Duraklat') }, '▶');
+  const bNext = el('button', { class: 'btn rb', title: __('Sonraki cümle') }, '⏭'), bStop = el('button', { class: 'btn rb', title: __('Durdur') }, '■');
+  const fill = el('i'), info = el('div', { class: 'hint', style: 'margin:4px 0 0;font-size:12px' });
+  R.bar = el('div', { class: 'rbar' }, el('div', { class: 'rbar-in' }, bPrev, bPlay, bNext, bStop,
+    el('div', { style: 'flex:1;min-width:110px' }, el('div', { class: 'prog', style: 'margin:0' }, fill), info)));
+  document.body.append(R.bar); document.body.style.paddingBottom = '90px';
+
+  function speakFrom(i){
+    R.token++; synth.cancel(); R.idx = Math.max(0, Math.min(i, R.sentences.length - 1)); R.playing = true; R.paused = false;
+    const tok = R.token; setTimeout(() => { if (tok === R.token) speakCurrent(tok); }, 60); ui();
+  }
+  function speakCurrent(tok){
+    if (tok !== R.token) return;
+    if (R.idx >= R.sentences.length){ R.playing = false; R.idx = 0; hl(-1); ui(); info.textContent = __('Bitti ✓'); return; }
+    const u = new SpeechSynthesisUtterance(R.sentences[R.idx].text); const vo = R.voices[voiceSel.value];
+    if (vo){ u.voice = vo; u.lang = vo.lang; } else u.lang = LANG === 'tr' ? 'tr-TR' : 'en-US';
+    u.rate = +$('rdRate').value; u.pitch = +$('rdPitch').value;
+    u.onend = () => { if (tok !== R.token) return; R.idx++; ui(); speakCurrent(tok); };
+    u.onerror = e => { if (tok !== R.token || e.error === 'interrupted' || e.error === 'canceled') return; R.idx++; speakCurrent(tok); };
+    hl(R.idx); synth.speak(u);
+  }
+  function hl(k){
+    R.sentences.forEach((s, i) => { s.el.classList.toggle('cur', i === k); s.el.classList.toggle('read', k >= 0 && i < k); });
+    const e = R.sentences[k] && R.sentences[k].el;
+    if (e){ const r = e.getBoundingClientRect(); if (r.top < 60 || r.bottom > innerHeight - 120) e.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+  }
+  function ui(){
+    const n = R.sentences.length, s = R.sentences[Math.min(R.idx, n - 1)];
+    bPlay.textContent = R.playing && !R.paused ? '❚❚' : '▶';
+    fill.style.width = (R.idx / n * 100) + '%';
+    info.textContent = __t`${R.playing ? (R.paused ? __('Duraklatıldı') : __('Okunuyor')) : __('Hazır')} · Sayfa ${s.page} · Cümle ${Math.min(R.idx + 1, n)}/${n}`;
+  }
+  const go = i => { i = Math.max(0, Math.min(i, R.sentences.length - 1)); if (R.playing && !R.paused) speakFrom(i); else { R.idx = i; hl(i); ui(); } };
+  bPlay.onclick = () => { if (!R.playing || R.paused) return speakFrom(R.idx); R.token++; synth.cancel(); R.paused = true; ui(); };
+  bStop.onclick = () => { R.token++; synth.cancel(); R.playing = false; R.paused = false; R.idx = 0; hl(-1); ui(); };
+  bPrev.onclick = () => go(R.idx - 1); bNext.onclick = () => go(R.idx + 1);
+  ui();
+}
+// Klavye: Boşluk = oynat/duraklat, ← → = cümleler
+document.addEventListener('keydown', e => {
+  if (!R.bar || /^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(e.target.tagName)) return;
+  const b = R.bar.querySelectorAll('button');
+  if (e.code === 'Space'){ e.preventDefault(); b[1].click(); }
+  else if (e.code === 'ArrowRight') b[2].click();
+  else if (e.code === 'ArrowLeft') b[0].click();
+});
+window.addEventListener('beforeunload', () => synth && synth.cancel());
+
+// İmza aracı
+async function setupSign(box){
+  const buf = await readBuf(files[0]); const pdf = await pdfjsDoc(buf);
+  custom.pdf = pdf; custom.pageNo = pdf.numPages; custom.place = null; custom.sigPng = null;
+  const pad = el('canvas', { id: 'sigPad' });
+  const typed = el('input', { type: 'text', placeholder: __('Adını yaz'), value: '' });
+  const tabDraw = el('button', { class: 'btn on' }, __('Çiz')), tabType = el('button', { class: 'btn' }, __('Yaz'));
+  const drawBox = el('div', {}, pad, el('div', { style: 'display:flex;gap:8px;margin-top:8px' },
+      el('button', { class: 'btn', onclick: () => { clearPad(); } }, __('Temizle')),
+      el('input', { type: 'color', id: 'sgCol', value: '#1b2a6b', style: 'width:60px' })));
+  const typeBox = el('div', { class: 'hidden' }, typed);
+  const pageSel = el('select', {}, Array.from({ length: pdf.numPages }, (_, i) => { const o = el('option', { value: i + 1 }, __t`Sayfa ${i + 1}`); if (i + 1 === pdf.numPages) o.selected = true; return o; }));
+  const sizeR = el('input', { type: 'range', min: 10, max: 60, value: 28 });
+  const place = el('div', { class: 'place' }); const sigImg = el('img', { class: 'hidden', alt: '' });
+  box.append(el('div', { style: 'margin-top:14px' },
+    el('div', { class: 'sigtabs' }, tabDraw, tabType), drawBox, typeBox,
+    el('div', { class: 'opts', style: 'margin-top:12px' },
+      el('div', {}, el('label', {}, __('Sayfa')), pageSel),
+      el('div', {}, el('label', {}, __('İmza genişliği')), sizeR),
+      el('div', {}, el('label', { class: 'chk' }, el('input', { type: 'checkbox', id: 'sgAll' }), __('Tüm sayfalara ekle')))),
+    el('p', { class: 'hint' }, __('Aşağıdaki önizlemede imzanın gideceği yere dokun.')), place));
+
+  // Çizim
+  const ctx = pad.getContext('2d'); let drawing = false, has = false;
+  const fit = () => { const r = pad.getBoundingClientRect(); const d = window.devicePixelRatio || 1; pad.width = r.width * d; pad.height = r.height * d; ctx.scale(d, d); ctx.lineCap = ctx.lineJoin = 'round'; ctx.lineWidth = 2.6; };
+  fit();
+  function clearPad(){ ctx.clearRect(0, 0, pad.width, pad.height); has = false; updateSig(); }
+  const pt = e => { const r = pad.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  pad.addEventListener('pointerdown', e => { drawing = true; pad.setPointerCapture(e.pointerId); ctx.strokeStyle = $('sgCol').value; ctx.beginPath(); ctx.moveTo(...pt(e)); });
+  pad.addEventListener('pointermove', e => { if (!drawing) return; ctx.lineTo(...pt(e)); ctx.stroke(); has = true; });
+  pad.addEventListener('pointerup', () => { drawing = false; updateSig(); });
+  let mode = 'draw';
+  tabDraw.onclick = () => { mode = 'draw'; tabDraw.classList.add('on'); tabType.classList.remove('on'); drawBox.classList.remove('hidden'); typeBox.classList.add('hidden'); updateSig(); };
+  tabType.onclick = () => { mode = 'type'; tabType.classList.add('on'); tabDraw.classList.remove('on'); typeBox.classList.remove('hidden'); drawBox.classList.add('hidden'); updateSig(); };
+  typed.addEventListener('input', () => updateSig());
+
+  function trim(c){
+    const x = c.getContext('2d'), { width: w, height: h } = c, d = x.getImageData(0, 0, w, h).data;
+    let t = h, l = w, b = -1, r = -1;
+    for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) if (d[(y * w + xx) * 4 + 3] > 10){ if (y < t) t = y; if (y > b) b = y; if (xx < l) l = xx; if (xx > r) r = xx; }
+    if (b < 0) return null;
+    const o = el('canvas'); o.width = r - l + 9; o.height = b - t + 9; o.getContext('2d').drawImage(c, l - 4, t - 4, o.width, o.height, 0, 0, o.width, o.height); return o;
+  }
+  async function updateSig(){
+    let src = null;
+    if (mode === 'draw' && has) src = trim(pad);
+    if (mode === 'type' && typed.value.trim()){
+      await document.fonts.load('600 80px "Dancing Script"').catch(() => {});
+      const c = el('canvas'), x = c.getContext('2d'); x.font = '600 90px "Dancing Script", cursive';
+      c.width = Math.ceil(x.measureText(typed.value).width + 30); c.height = 130;
+      x.font = '600 90px "Dancing Script", cursive'; x.fillStyle = $('sgCol') ? $('sgCol').value : '#1b2a6b'; x.textBaseline = 'middle'; x.fillText(typed.value, 15, 65);
+      src = trim(c);
+    }
+    if (!src){ custom.sigPng = null; sigImg.classList.add('hidden'); return; }
+    sigImg.src = src.toDataURL('image/png');
+    custom.sigPng = await (await canvasBlob(src, 'image/png')).arrayBuffer(); custom.sigRatio = src.height / src.width;
+    sigImg.classList.remove('hidden'); position();
+  }
+  let rend = null;
+  async function showPage(){
+    custom.pageNo = +pageSel.value; place.innerHTML = '';
+    const w = Math.min(place.parentElement.clientWidth || 600, 700);
+    const p = await pdf.getPage(custom.pageNo); const s = w / p.getViewport({ scale: 1 }).width;
+    rend = await renderPage(pdf, custom.pageNo, s * (window.devicePixelRatio || 1));
+    rend.canvas.style.width = w + 'px'; place.append(rend.canvas, sigImg); position();
+  }
+  let tap = null;
+  place.addEventListener('click', e => { const r = rend.canvas.getBoundingClientRect(); tap = [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; position(); });
+  function position(){
+    if (!rend || !tap || !custom.sigPng){ if (!tap) sigImg.style.display = 'none'; return; }
+    const cw = rend.canvas.getBoundingClientRect().width, ch = rend.canvas.getBoundingClientRect().height;
+    const wPx = cw * sizeR.value / 100, hPx = wPx * custom.sigRatio;
+    Object.assign(sigImg.style, { display: 'block', width: wPx + 'px', left: (tap[0] * cw - wPx / 2) + 'px', top: (tap[1] * ch - hPx / 2) + 'px' });
+    // PDF koordinatına çevir (sayfa dönüşünü hesaba katar)
+    const vp = rend.page.getViewport({ scale: 1 });
+    const [px, py] = vp.convertToPdfPoint(tap[0] * vp.width, tap[1] * vp.height);
+    const w = vp.width * sizeR.value / 100;
+    custom.place = { x: px, y: py, w, h: w * custom.sigRatio };
+  }
+  pageSel.onchange = showPage; sizeR.oninput = position;
+  await showPage();
+}
+
+// ---------- Ana ekran ----------
+const groups = {};
+TOOLS.forEach(t => (groups[t.group] ||= []).push(t));
+Object.entries(groups).forEach(([g, ts]) => {
+  $('groups').append(el('div', { class: 'group-t' }, g), el('div', { class: 'grid' },
+    ts.map(t => el('button', { class: 'card' + (t.wide ? ' wide' : ''), onclick: () => openTool(t.id) },
+      el('div', { class: 'ic', style: `background:${t.color}1f;color:${t.color}` }, t.icon),
+      el('div', {}, el('b', {}, t.title), el('span', {}, t.desc))))));
+});
+
+function openTool(id){
+  current = TOOLS.find(t => t.id === id); if (!current) return;
+  files = []; custom = {}; stopReader();
+  $('run').classList.toggle('hidden', !!current.noRun);
+  $('home').classList.add('hidden'); $('tool').classList.remove('hidden');
+  $('tIc').textContent = current.icon; $('tIc').style.cssText = `background:${current.color}1f;color:${current.color}`;
+  $('tTitle').textContent = current.title; $('tDesc').textContent = current.desc;
+  $('fileIn').accept = current.accept; $('fileIn').multiple = !!current.multiple;
+  $('dropT').textContent = current.multiple ? __('Dosyaları seç') : __('Dosya seç');
+  $('dropS').textContent = __('veya buraya sürükle') + (current.hint ? ' · ' + current.hint : '');
+  const o = current.options ? current.options() : [];
+  $('opts').innerHTML = ''; $('opts').append(...o);
+  $('note').innerHTML = current.note ? `<div class="warn">${current.note}</div>` : '';
+  $('optPanel').classList.toggle('hidden', !o.length && !current.note);
+  $('custom').innerHTML = ''; $('result').innerHTML = ''; setStatus(''); $('prog').classList.add('hidden');
+  if (current.libs) need(...current.libs).catch(() => {}); // önden yükle
+  if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
+  renderFiles(); window.scrollTo(0, 0);
+}
+function goHome(){ stopReader(); current = null; $('tool').classList.add('hidden'); $('home').classList.remove('hidden'); }
+$('back').onclick = () => { history.pushState(null, '', location.pathname + location.search); goHome(); };
+window.addEventListener('hashchange', route); window.addEventListener('popstate', route);
+function route(){ const h = location.hash.slice(1); if (h && TOOLS.some(t => t.id === h)) { if (!current || current.id !== h) openTool(h); } else goHome(); }
+
+function renderFiles(){
+  const ul = $('fileList'); ul.innerHTML = '';
+  files.forEach((f, i) => ul.append(el('li', {},
+    el('span', { class: 'n' }, f.name), el('span', { class: 'sz' }, fmtSize(f.size)),
+    current.sortable ? el('button', { class: 'mini', title: __('Yukarı'), onclick: () => { if (i) { [files[i - 1], files[i]] = [files[i], files[i - 1]]; renderFiles(); } } }, '↑') : null,
+    current.sortable ? el('button', { class: 'mini', title: __('Aşağı'), onclick: () => { if (i < files.length - 1) { [files[i + 1], files[i]] = [files[i], files[i + 1]]; renderFiles(); } } }, '↓') : null,
+    el('button', { class: 'mini', title: __('Kaldır'), onclick: () => { files.splice(i, 1); custom = {}; stopReader(); $('custom').innerHTML = ''; renderFiles(); } }, '✕'))));
+  $('run').disabled = files.length < (current.min || 1);
+  $('run').textContent = current.title + ' →';
+}
+async function addFiles(list){
+  const arr = [...list].filter(f => current.accept === 'image/*' ? f.type.startsWith('image/') : true);
+  if (!arr.length) return;
+  files = current.multiple ? files.concat(arr) : [arr[0]];
+  $('result').innerHTML = ''; setStatus('');
+  renderFiles();
+  if (current.onFiles){
+    $('custom').innerHTML = ''; custom = {};
+    try { setStatus(__('Hazırlanıyor…')); await need(...(current.libs || [])); await current.onFiles($('custom')); setStatus(''); $('prog').classList.add('hidden'); }
+    catch(e){ setStatus(__('Hata: ') + e.message); }
+  }
+}
+const drop = $('drop');
+drop.onclick = () => $('fileIn').click();
+drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('fileIn').click(); } };
+['dragenter', 'dragover'].forEach(n => drop.addEventListener(n, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(n => drop.addEventListener(n, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+$('fileIn').onchange = () => { addFiles($('fileIn').files); $('fileIn').value = ''; };
+
+$('run').onclick = async () => {
+  const btn = $('run'); btn.disabled = true; $('result').innerHTML = ''; custom.msg = '';
+  try {
+    setStatus(__('Kütüphaneler yükleniyor…')); await need(...(current.libs || []));
+    const t0 = performance.now();
+    const outs = await current.run();
+    $('progI').style.width = '100%'; await sleep(150); $('prog').classList.add('hidden');
+    setStatus(__t`Tamamlandı (${((performance.now() - t0) / 1000).toFixed(1)} sn).`);
+    showResult(outs);
+  } catch(e){
+    console.error(e); $('prog').classList.add('hidden'); setStatus(__('Hata: ') + (e.message || e));
+  } finally { btn.disabled = files.length < (current.min || 1); }
+};
+async function showResult(outs){
+  const d = await getDownloads();
+  const box = el('div', { class: 'result' }, el('h3', {}, __('Dosyan hazır')));
+  if (custom.msg) box.append(el('p', { class: 'hint', style: 'margin:0 0 8px' }, custom.msg));
+  outs.forEach((o, i) => {
+    const b = el('button', { class: 'btn' + (i === 0 ? ' primary' : '') }, __('İndir'));
+    b.onclick = () => saveFile(o, b);
+    let sh = null;
+    try {
+      const f = new File([o.blob], o.name, { type: o.blob.type || 'application/octet-stream' });
+      if (d === null && navigator.canShare && navigator.canShare({ files: [f] }))
+        sh = el('button', { class: 'btn', title: __('Paylaş veya Dosyalar\'a kaydet'), onclick: () => navigator.share({ files: [f], title: o.name }).catch(() => {}) }, __('Paylaş'));
+    } catch(e){}
+    box.append(el('div', { class: 'dl' }, el('span', { class: 'n' }, o.name), el('span', { class: 'sz' }, fmtSize(o.blob.size)), sh, b));
+  });
+  if (outs.length > 2) box.append(el('p', { class: 'hint' }, __('İpucu: .zip dosyası tümünü tek seferde indirir.')));
+  if (d === null && window.self !== window.top) box.append(el('p', { class: 'hint' }, __('İndirme bu görünümde kullanılamıyorsa sayfayı claude.ai üzerinde aç.')));
+  $('result').append(box);
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+route();
+if ('launchQueue' in window) launchQueue.setConsumer(async params => {
+  if (!params.files || !params.files.length) return;
+  const fs = await Promise.all(params.files.map(h => h.getFile()));
+  openTool(fs.length > 1 ? 'merge' : 'read'); addFiles(fs);
+});
+})();
+</script>
+<script>
+(() => {
+  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  let deferred = null; const btn = document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; btn.classList.remove('hidden'); });
+  btn.addEventListener('click', async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice.catch(() => {}); deferred = null; btn.classList.add('hidden'); });
+  window.addEventListener('appinstalled', () => btn.classList.add('hidden'));
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let seen = false; try { seen = !!localStorage.getItem('iosHintSeen'); } catch(e){}
+  if (ios && !standalone && !seen) document.getElementById('iosHint').classList.remove('hidden');
+  const net = () => document.getElementById('offlineNote').classList.toggle('hidden', navigator.onLine);
+  addEventListener('online', net); addEventListener('offline', net); net();
+})();
+</script>
+</body>
+</html>
